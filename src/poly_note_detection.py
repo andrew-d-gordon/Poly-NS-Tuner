@@ -25,7 +25,7 @@ def max_in_ft(yf, xf, audio_len):
     return xf[max_mag_idx], max_amp
 
 
-def fftplot(yf, xf, audio_len):
+def fft_plot(yf, xf, audio_len):
     fig, ax = plt.subplots()
     ax.plot(xf, 2.0 / audio_len * np.abs(yf[:audio_len // 2]))
     plt.grid()
@@ -40,7 +40,7 @@ def compute_ft(audio, sr):
     yf = fft(audio * window)
     T = 1 / sr
     xf = np.linspace(0.0, 1.0 / (2.0 * T), audio_len // 2)
-    fftplot(yf, xf, audio_len) #optional plot
+    fft_plot(yf, xf, audio_len)  # Optional fft plot
     return yf, xf, audio_len
 
 
@@ -55,13 +55,13 @@ def collect_peaks(yf, xf, audio_len, num_candidates):
     current_peaks_amps = []  # list for peak amplitudes
 
     while len(current_peaks) < num_candidates:
-        # grab maximum magnitude and frequency, magnitude for frequency set to 0, initial mag returned to candidate_mag
+        # Grab maximum magnitude and frequency, magnitude for frequency set to 0, initial mag returned to candidate_mag
         max_mag_freq, candidate_mag = max_in_ft(yf, xf, audio_len)
 
-        # translate to key (candidate)
+        # Translate to key (candidate)
         candidate_peak_ns = freq_to_note(max_mag_freq)
 
-        # check if same pitch already in current peaks
+        # Check if same pitch already in current peaks
         if candidate_peak_ns not in current_peaks:
             current_peaks.append(candidate_peak_ns)
             current_peaks_freq.append(max_mag_freq)
@@ -93,13 +93,15 @@ def peak_to_f_harmonic_weight(f_mp, p_mp):  # Provides value of ti*ni
 
     for idx in range(len(harmonic_series_mp)):
         if f_mp+harmonic_series_mp[idx] == p_mp:
-            return harmonic_series_weight[idx] # peak is a multiple of F0
+            return harmonic_series_weight[idx]  # Peak is a multiple of F0
 
     # Peak is not a multiple of f0
     return 1
 
 
 '''
+Calculation behind weight function for peak's likelihood to be fundamental...
+
 L(f) = Summation(i=0,k){ai*ti*ni}
 Where k is number of peaks in the spectrum,
 -ai is a factor depending on the amplitude of the ith peak,
@@ -126,26 +128,3 @@ def compute_peak_likelihood(current_peaks_mp, current_peaks_amps, num_candidates
         current_peak_weights.append(f_weight)
 
     return current_peak_weights
-
-    '''
-    L(f) = Summation(i=0,k){ai*ti*ni}
-    Where k is number of peaks in the spectrum, 
-    -ai is a factor depending on the amplitude of the ith peak,
-    -ti depends on how closely the ith peak is tuned to a multiple of fi
-    -ni depends on whether the peak is closest to a low or high multiple of f
-    
-    For monophonic pitch estimation, we simply output the value of f whose "likelihood" is highest.
-    For polyphonic pitch estimation, we successively take the values of f of greatest likelihood which are neither multiples
-    nor sub-multiples of a previous one.  (loosen up on being sub multiple for octaves)
-    
-    In all cases, last criteria to determine if there is pitch (as L(f) will always have a maximum even if no pitch).
-    Our criterion is that there either be at least four peaks present or else that the fundamental be present and the total 
-    power of contributing peaks be at least a hundredth of the signal power.
-    '''
-
-    # pieces:
-    # 1)amplitude decision, amp or db? what is threshold?
-    # 2)determine if self is harmonic overtone, if at least half db of "fundamental" do not dock weight
-    # 3)determine value of each overtone, if first octave *2, if first octave fifth *1.5, second octave *1, second octave third *.5
-    # 4)set exit decision criteria, how harsh to dock multiples of other frequencies, amplitude threshold, ...
-    # overtone series: e.g. C3 then the overtones C4, G4, C5, and E5
