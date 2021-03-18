@@ -1,11 +1,13 @@
 from math import log2, pow
 
+# CONSTANTS
 A4 = 440
 C0 = A4 * pow(2, -4.75)
 key_names = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"]
 octaves = list(range(11))
-NOTES_IN_OCTAVE = len(key_names)
+notes_in_octave = len(key_names)
 
+# ERRORS DICT
 errors = {
     'program': 'Bad input, please refer this spec-\n',
 }
@@ -22,7 +24,7 @@ def note_to_midi_pitch(note:str, octave:int):
     assert octave in octaves, errors['program']
 
     midi_pitch_val = key_names.index(note)
-    midi_pitch_val += (NOTES_IN_OCTAVE * octave)
+    midi_pitch_val += (notes_in_octave * octave)
 
     assert 0 <= midi_pitch_val <= 127, errors['program']
 
