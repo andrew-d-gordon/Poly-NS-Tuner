@@ -1,10 +1,11 @@
 import matplotlib.pyplot as plt
 from librosa import load
-# from scipy.io import wavfile as wav
 from scipy.fftpack import fft
 import numpy as np
-import heapq
+import math
 from freq_to_note import pitch
+# from scipy.io import wavfile as wav
+import heapq
 
 
 def maxInFT(yf, xf, audio_len):
@@ -31,8 +32,9 @@ def computeFT(audio, sr):
     fftplot(yf, xf, audio_len)
     return yf, xf, audio_len
 
-def convert_magnitude(yf, xf, audio_len):
-    print("converting magnitude")
+def convert_magnitude(yf, audio_len):
+    yfconvert = [math.sqrt(elem.real**2 + elem.imag**2) for elem in yf]
+    return yfconvert
 
 def collect_peaks(num_candidates):
     current_peaks = []  # list for peaks
@@ -64,6 +66,11 @@ data, sr = load('samples/glocka52.wav')
 # COMPUTE FOURIER TRANSFORM (VIA DFT)
 yf, xf, audio_len = computeFT(data, sr)
 
+# CONVERT MAGNITUDE
+yf_mag_convert = convert_magnitude(yf, audio_len)
+print("This is yf elem:", yf[2671], ", this is converted:", yf_mag_convert[2671])
+print("This is yf elem:", yf[7222], ", this is converted:", yf_mag_convert[7222])
+
 # CANDIDATE PEAK SELECTION
 current_peaks, candidate_peak_freqs = collect_peaks(num_candidates)
 
@@ -74,6 +81,18 @@ print(candidate_peak_freqs)
 # CANDIDATE PEAK LIKELIHOOD AND PITCH SELECTION (magnitude, harmonics, duration?)
 
 # DURATION/END AND START NOTE MONITORING
+
+
+
+
+
+
+
+
+
+
+
+
 
 '''
 L(f) is a non-negative likelihood function where f is frequency. The presence of peaks at or near multiples of f increases
