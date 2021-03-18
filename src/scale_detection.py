@@ -51,11 +51,11 @@ class noteSet:
 
         # Find scale key
         scaleKeyIdx = scaleIdx % 12
-        scaleKey = n.keys[scaleKeyIdx]
+        scaleKey = self.keys[scaleKeyIdx]
 
         # Find scale mode
         scaleModeIdx = math.floor(scaleIdx / 12)
-        scaleMode = n.modes[scaleModeIdx]
+        scaleMode = self.modes[scaleModeIdx]
 
         self.closestScale = scaleKey + " " + scaleMode
 
@@ -90,11 +90,13 @@ class noteSet:
         print("B: ", self.noteAmounts[11])
 
 
-# MAIN
-# notes set may be maintained as queue of a specific size (adding/removing notes one at a time)
+# example use case
+# notes set could be maintained as queue of a desired size (updating in a 'sliding window' fashion)
+'''
 notes = [60, 60, 62, 63, 65, 67]
 n = noteSet()
 n.setNoteAmounts(notes)
 
 n.findClosestScale()
 print(n.closestScale)
+'''

@@ -1,36 +1,44 @@
+# IMPORTS
 from librosa import load
 from poly_note_detection import *
+from freq_note_conversions import *
+from scale_detection import *
 from audio_stream_test import decibelScale
 
-# SET CONSTANTS
-
+# CONSTANTS
 num_pitches = 1
-num_candidates = 10
+num_candidates = 20
 
 # LOAD SAMPLE/PREP BUFFER
 data, sr = load('samples/piano_chords_Cm_vanilla.wav')
 
 # COMPUTE FOURIER TRANSFORM (VIA DFT)
-yf, xf, audio_len = computeFT(data, sr)
+ft, xf, audio_len = compute_ft(data, sr)
 
-# CONVERT MAGNITUDE
-yf_mag_convert = convert_magnitude(yf, audio_len)
-print("This is yf elem:", yf[2671], ", this is converted:", yf_mag_convert[2671])
-print("This is yf elem:", yf[7222], ", this is converted:", yf_mag_convert[7222])
+# CONVERT FT COMPLEX VALS TO AMP
+ft_amp = convert_magnitude(ft, audio_len)
 
 # CANDIDATE PEAK SELECTION
-current_peaks, candidate_peak_freqs = collect_peaks(yf, xf, audio_len, num_candidates)
+current_peaks, current_peaks_freqs, current_peaks_amps = collect_peaks(ft_amp, xf, audio_len, num_candidates)
+current_peaks_midi_pitch = [note_to_midi_pitch(elem[0], elem[1]) for elem in current_peaks]  # create list w/midi pitch
 
 #PRINT CURRENT CANDIDATE PEAKS (FREQS AND KEYS)
 print(current_peaks)
-print(candidate_peak_freqs)
+print(current_peaks_midi_pitch)
+print(current_peaks_freqs)
+print(current_peaks_amps)
 
 # CANDIDATE PEAK LIKELIHOOD AND PITCH SELECTION (magnitude, harmonics, duration?)
 
+# DURATION/END AND START NOTE MONITORING?
 
+# SCALE DETECTION (current_peaks_midi_pitch is input)
+n = noteSet()
+n.setNoteAmounts(current_peaks_midi_pitch)
+n.findClosestScale()
+print(n.closestScale)
 
-# DURATION/END AND START NOTE MONITORING
-
+# PSEUDOCODE/NOTES
 '''
 L(f) is a non-negative likelihood function where f is frequency. The presence of peaks at or near multiples of f increases
 L(f) in a way which depends on the peak's amplitude and frequency as shown:
