@@ -6,42 +6,47 @@ from scale_detection import *
 from audio_stream_test import decibelScale
 
 # CONSTANTS
-num_pitches = 3
+num_pitches = 1
 num_candidates = 20
 
 # LOAD SAMPLE/PREP BUFFER
 data, sr = load('samples/piano_chords_melody_Cm_vanilla.wav')
 
-# COMPUTE FOURIER TRANSFORM (VIA DFT)
-ft, xf, audio_len = compute_ft(data, sr)
+def poly_ns_tuner_main(data, sr):
 
-# CONVERT FT COMPLEX VALS TO AMP
-ft_amp = convert_magnitude(ft, audio_len)
+    # COMPUTE FOURIER TRANSFORM (VIA DFT)
+    ft, xf, audio_len = compute_ft(data, sr)
 
-# CANDIDATE PEAK SELECTION
-current_peaks, current_peaks_freqs, current_peaks_amps = collect_peaks(ft_amp, xf, audio_len, num_candidates)
-current_peaks_midi_pitch = [note_to_midi_pitch(elem[0], elem[1]) for elem in current_peaks]  # create list w/midi pitch
+    # CONVERT FT COMPLEX VALS TO AMP
+    ft_amp = convert_magnitude(ft)
 
-#PRINT CURRENT CANDIDATE PEAKS (NOTES, MIDI PITCHES, FREQS, AMPS)
-print("\nHere are feature lists for unique candidate peaks...\n")
-print("Current peaks notes:", current_peaks)
-print("Current peaks midi pitches:", current_peaks_midi_pitch)
-print("Current peaks freqs:", current_peaks_freqs)
-print("Current peaks amplitudes:", current_peaks_amps)
+    # CANDIDATE PEAK SELECTION
+    current_peaks, current_peaks_freqs, current_peaks_amps = collect_peaks(ft_amp, xf, audio_len, num_candidates)
+    current_peaks_midi_pitch = [note_to_midi_pitch(elem[0], elem[1]) for elem in current_peaks]  # create list w/midi pitch
 
-# CANDIDATE PEAK LIKELIHOOD CALCULATION AND FUNDAMENTAL SELECTION
-current_peak_weights = compute_peak_likelihood(current_peaks_midi_pitch, current_peaks_amps, num_candidates)
-print("\nCurrent peaks weights:", current_peak_weights)
+    #PRINT CURRENT CANDIDATE PEAKS (NOTES, MIDI PITCHES, FREQS, AMPS)
+    print("\nHere are feature lists for unique candidate peaks...\n")
+    print("Current peaks notes:", current_peaks)
+    print("Current peaks midi pitches:", current_peaks_midi_pitch)
+    print("Current peaks freqs:", current_peaks_freqs)
+    print("Current peaks amplitudes:", current_peaks_amps)
 
-fundamental_predictions = retrieve_n_best_fundamentals(current_peak_weights, current_peaks, num_pitches)
-print("Current fundamental predictions:", fundamental_predictions)
+    # CANDIDATE PEAK LIKELIHOOD CALCULATION AND FUNDAMENTAL SELECTION
+    current_peak_weights = compute_peak_likelihood(current_peaks_midi_pitch, current_peaks_amps, num_candidates)
+    #print("\nCurrent peaks weights:", current_peak_weights)
 
-# DURATION/END AND START NOTE MONITORING
+    fundamental_predictions = retrieve_n_best_fundamentals(current_peak_weights, current_peaks, num_pitches)
+    print("Current fundamental predictions:", fundamental_predictions)
 
-#  ================================================= N/A
+    # DURATION/END AND START NOTE MONITORING
 
-# SCALE DETECTION (current_peaks_midi_pitch is input)
-n = noteSet()
-n.setNoteAmounts(current_peaks_midi_pitch)
-n.findClosestScale()
-print(n.closestScale)
+    #  ================================================= N/A
+
+    # SCALE DETECTION (current_peaks_midi_pitch is input)
+    n = noteSet()
+    n.setNoteAmounts(current_peaks_midi_pitch) #ideally feed in fundamental_predictions instead (once stream works)
+    n.findClosestScale()
+    print(n.closestScale)
+
+#test call
+poly_ns_tuner_main(data, sr)

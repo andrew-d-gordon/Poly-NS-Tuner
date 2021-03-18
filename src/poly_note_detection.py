@@ -40,13 +40,12 @@ def compute_ft(audio, sr):
     yf = fft(audio * window)
     T = 1 / sr
     xf = np.linspace(0.0, 1.0 / (2.0 * T), audio_len // 2)
-    fft_plot(yf, xf, audio_len)  # Optional fft plot
+    #fft_plot(yf, xf, audio_len)  # Optional fft plot
     return yf, xf, audio_len
 
 
-def convert_magnitude(yf, audio_len):
-    yfconvert = [math.sqrt(elem.real ** 2 + elem.imag ** 2) for elem in yf]
-    return yfconvert
+def convert_magnitude(yf):
+    return [math.sqrt(elem.real ** 2 + elem.imag ** 2) for elem in yf]
 
 
 def collect_peaks(yf, xf, audio_len, num_candidates):
