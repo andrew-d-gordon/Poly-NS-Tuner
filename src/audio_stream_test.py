@@ -36,7 +36,7 @@ def callback(in_data, frame_count, time_info, status):
   #print(levels(stream.read(1024)))
 
   return (in_data, pyaudio.paContinue)
-
+'''
 stream = p.open(format=pyaudio.paInt16,
                 channels=1,
                 rate=48000,
@@ -49,3 +49,4 @@ stream = p.open(format=pyaudio.paInt16,
 
 time.sleep(10)
 stream.close()
+'''

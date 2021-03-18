@@ -54,3 +54,21 @@ def collect_peaks(yf, xf, audio_len, num_candidates):
             print("Candidate Peak and Max Mag Freq:", candidate_peak, ",", maxMagFreq)
 
     return current_peaks, candidate_peak_freqs
+
+def compute_peak_likelihood(peak_notes):
+    print("computing likelihood")
+    '''
+    L(f) = Summation(i=0,k){ai*ti*ni}
+    Where k is number of peaks in the spectrum, 
+    -ai is a factor depending on the amplitude of the ith peak,
+    -ti depends on how closely the ith peak is tuned to a multiple of fi
+    -ni depends on whether the peak is closest to a low or high multiple of f
+    
+    For monophonic pitch estimation, we simply output the value of f whose "likelihood" is highest.
+    For polyphonic pitch estimation, we successively take the values of f of greatest likelihood which are neither multiples
+    nor sub-multiples of a previous one.  (loosen up on being sub multiple for octaves)
+    
+    In all cases, last criteria to determine if there is pitch (as L(f) will always have a maximum even if no pitch).
+    Our criterion is that there either be at least four peaks present or else that the fundamental be present and the total 
+    power of contributing peaks be at least a hundredth of the signal power.
+    '''

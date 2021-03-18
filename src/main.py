@@ -1,13 +1,14 @@
 from librosa import load
 from poly_note_detection import *
+from audio_stream_test import decibelScale
 
 # SET CONSTANTS
 
 num_pitches = 1
-num_candidates = 5
+num_candidates = 10
 
 # LOAD SAMPLE/PREP BUFFER
-data, sr = load('samples/glocka52.wav')
+data, sr = load('samples/piano_chords_Cm_vanilla.wav')
 
 # COMPUTE FOURIER TRANSFORM (VIA DFT)
 yf, xf, audio_len = computeFT(data, sr)
@@ -26,19 +27,9 @@ print(candidate_peak_freqs)
 
 # CANDIDATE PEAK LIKELIHOOD AND PITCH SELECTION (magnitude, harmonics, duration?)
 
+
+
 # DURATION/END AND START NOTE MONITORING
-
-
-
-
-
-
-
-
-
-
-
-
 
 '''
 L(f) is a non-negative likelihood function where f is frequency. The presence of peaks at or near multiples of f increases
