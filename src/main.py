@@ -60,7 +60,7 @@ def main():
 
     # LOAD FIRST BUFFER OF AUDIO TO PROCESS
     location_in_audio = 0
-    audio_to_process = split_wav_by_second(data, location_in_audio, samples_per_buffer)
+    audio_to_process = split_wav_by_seconds(data, location_in_audio, samples_per_buffer)
 
     # INIT SCALE DETECTION NOTE BUFFER AND SCALE DETECTION OBJECT
     all_note_predictions = []
@@ -86,7 +86,7 @@ def main():
 
         # CHECK IF MORE AUDIO TO PROCESS, IF NOT, EXIT
         if audio_len - location_in_audio > 0:
-            audio_to_process = split_wav_by_second(data, location_in_audio, samples_per_buffer)
+            audio_to_process = split_wav_by_seconds(data, location_in_audio, samples_per_buffer)
         else:
             break
 
