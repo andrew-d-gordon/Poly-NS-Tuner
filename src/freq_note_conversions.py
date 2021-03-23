@@ -14,6 +14,8 @@ errors = {
 
 def freq_to_note(freq):
     '''assert freq > 0, errors['program']'''
+    if freq==0:
+        return ('C', -1)
     h = round(12 * log2(freq / C0)) #can also use log(x)/log(2) to replace log2
     octave = h // 12
     n = h % 12

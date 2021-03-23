@@ -12,6 +12,8 @@ import heapq
 # Harmonic Series based on, e.g. C3, overtones = C4(+12), G4(+19), C5(+24), and E5(+28)...
 harmonic_series_mp = [12, 19, 24, 28, 31]
 harmonic_series_weight = [2, 1.8, 1.6, 1.4, 1.2]
+#think of more linear function for ti, val from 1 to 2 based on distance to harmonic,
+#ti then gets multiplied by ni, the final harmonic series weight in above series_weight array
 
 # Formant weights/mp intervals, soon...
 
@@ -20,6 +22,10 @@ harmonic_series_weight = [2, 1.8, 1.6, 1.4, 1.2]
 def max_in_ft(yf, xf, audio_len):
     max_mag_idx = np.argmax(yf[:audio_len // 2], axis=0)  # get max idx
     # print(maxMagIdx, " ", yf[maxMagIdx], " ", xf[maxMagIdx])
+    if xf[max_mag_idx] < 20 or xf[max_mag_idx] > 20000: # IF FREQ NOT IN RANGE, NULL PEAK, RUN AGAIN
+        yf[max_mag_idx] = 0
+        return max_in_ft(yf, xf, audio_len)
+
     max_amp = yf[max_mag_idx]
     yf[max_mag_idx] = 0
     return xf[max_mag_idx], max_amp
@@ -77,7 +83,7 @@ def retrieve_n_best_fundamentals(current_peak_weights, current_peaks, num_pitche
     while pitches_selected < num_pitches:
         # Select largest weight, find idx and corresponding note, append to prediction list
         best_f0_idx = np.argmax(current_peak_weights)
-        fundamental_predictions.append((current_peaks[best_f0_idx], current_peak_weights[best_f0_idx]))
+        fundamental_predictions.append(current_peaks[best_f0_idx])
 
         # Void value at most recent max, continue search for f0's until num_pitches f0's have been found
         current_peak_weights[best_f0_idx] = 0
