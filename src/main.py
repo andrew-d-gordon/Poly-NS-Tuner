@@ -6,12 +6,12 @@ from scale_detection import *
 from audio_stream_test import decibelScale
 
 
-# RUN ONE SECOND/REMAINING SAMPLES OF FILE TO POLY_NS_TUNER
+# RUN NUM OF SECONDS*SR/REMAINING SAMPLES OF FILE TO POLY_NS_TUNER
 def split_wav_by_seconds(data, location_in_audio, seconds_per_buffer):
     if len(data) - location_in_audio > seconds_per_buffer:
-        return data[location_in_audio:location_in_audio+seconds_per_buffer]  # PROCESS ONE SECOND OF AUDIO
+        return data[location_in_audio:location_in_audio+seconds_per_buffer]  # PROCESS N SECONDS OF AUDIO
     else:
-        return data[location_in_audio:]  # PROCESS REMAINING SAMPLES/LESS THAN ONE SEC AUDIO INPUT
+        return data[location_in_audio:]  # PROCESS REMAINING SAMPLES/LESS THAN N SECONDS OF AUDIO
 
 
 # PREDICTS NUM_PITCHES PITCH PREDICTIONS AS MIDI_PITCH LIST
