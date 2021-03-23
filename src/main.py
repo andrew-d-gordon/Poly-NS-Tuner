@@ -75,8 +75,8 @@ def main():
         # APPEND NOTES WHICH WERE PREDICTED TO SCALE GUESS LIST
         for note in new_note_predictions:
             all_note_predictions.append(note)
-        print("\nLEN NOTE PRED:", len(all_note_predictions))
-        print("THIS IS CURRENT NOTE PREDICTION HISTORY:", all_note_predictions)
+        print("\nNumber of note predictions:", len(all_note_predictions))
+        print("Current note prediction history:", all_note_predictions)
 
         # RUN SCALE PREDICTION IF ENOUGH NOTES IN BUFFER
         if len(all_note_predictions) > num_pitches_for_scale_detection:
@@ -90,7 +90,7 @@ def main():
         else:
             break
 
-    print("FINISHED PROCESSING FILE, FIN")
+    print("Fin")
 
 
 if __name__ == "__main__":
