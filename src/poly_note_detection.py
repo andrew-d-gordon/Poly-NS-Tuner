@@ -21,7 +21,7 @@ harmonic_series_weight = [2, 1.8, 1.6, 1.4, 1.2]
 
 def max_in_ft(yf, xf, audio_len):
     max_mag_idx = np.argmax(yf[:audio_len // 2], axis=0)  # get max idx
-    # print(maxMagIdx, " ", yf[maxMagIdx], " ", xf[maxMagIdx])
+
     if xf[max_mag_idx] < 20 or xf[max_mag_idx] > 20000: # IF FREQ NOT IN RANGE, NULL PEAK, RUN AGAIN
         yf[max_mag_idx] = 0
         return max_in_ft(yf, xf, audio_len)
