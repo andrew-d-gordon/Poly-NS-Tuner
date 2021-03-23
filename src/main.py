@@ -7,7 +7,7 @@ from audio_stream_test import decibelScale
 
 
 # RUN ONE SECOND/REMAINING SAMPLES OF FILE TO POLY_NS_TUNER
-def split_wav_by_second(data, location_in_audio, seconds_per_buffer):
+def split_wav_by_seconds(data, location_in_audio, seconds_per_buffer):
     if len(data) - location_in_audio > seconds_per_buffer:
         return data[location_in_audio:location_in_audio+seconds_per_buffer]  # PROCESS ONE SECOND OF AUDIO
     else:
