@@ -6,10 +6,10 @@ from scale_detection import *
 from audio_stream_test import decibelScale
 
 
-# RUN ONE SECOND/REMAINING SAMPLES OF FILE TO POLY_NS_TUNER
-def split_wav_by_seconds(data, location_in_audio, seconds_per_buffer):
-    if len(data) - location_in_audio > seconds_per_buffer:
-        return data[location_in_audio:location_in_audio+seconds_per_buffer]  # PROCESS ONE SECOND OF AUDIO
+# RETRIEVE samples_per_buffer/REMAINING SAMPLES OF FILE FOR POLY_NOTE_TUNER
+def split_wav_into_chunk(data, location_in_audio, samples_per_buffer):
+    if len(data) - location_in_audio > samples_per_buffer:
+        return data[location_in_audio:location_in_audio+samples_per_buffer]  # PROCESS ONE SECOND OF AUDIO
     else:
         return data[location_in_audio:]  # PROCESS REMAINING SAMPLES/LESS THAN ONE SEC AUDIO INPUT
 
@@ -48,19 +48,19 @@ def poly_note_tuner(data, sr, num_candidates, num_pitches):
 
 def main():
     # CONSTANTS
-    num_pitches = 4
+    num_pitches = 3
     num_candidates = 50
     num_pitches_for_scale_detection = 4
-    seconds_per_buffer = 2
+    seconds_per_buffer = 1
 
     # LOAD SAMPLE/PREP BUFFER
     data, sr = load('samples/piano_chords_melody_Cm_vanilla.wav')
     audio_len = len(data)
-    samples_per_buffer = seconds_per_buffer*sr
+    samples_per_buffer = 4096  # optionally seconds_per_buffer * sr
 
     # LOAD FIRST BUFFER OF AUDIO TO PROCESS
     location_in_audio = 0
-    audio_to_process = split_wav_by_seconds(data, location_in_audio, samples_per_buffer)
+    audio_to_process = split_wav_into_chunk(data, location_in_audio, samples_per_buffer)
 
     # INIT SCALE DETECTION NOTE BUFFER AND SCALE DETECTION OBJECT
     all_note_predictions = []
@@ -86,7 +86,7 @@ def main():
 
         # CHECK IF MORE AUDIO TO PROCESS, IF NOT, EXIT
         if audio_len - location_in_audio > 0:
-            audio_to_process = split_wav_by_seconds(data, location_in_audio, samples_per_buffer)
+            audio_to_process = split_wav_into_chunk(data, location_in_audio, samples_per_buffer)
         else:
             break
 

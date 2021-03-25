@@ -12,13 +12,13 @@ import heapq
 # Harmonic Series based on, e.g. C3, overtones = C4(+12), G4(+19), C5(+24), and E5(+28)...
 harmonic_series_mp = [12, 19, 24, 28, 31]
 harmonic_series_weight = [2, 1.8, 1.6, 1.4, 1.2]
-#think of more linear function for ti, val from 1 to 2 based on distance to harmonic,
-#ti then gets multiplied by ni, the final harmonic series weight in above series_weight array
+# think of more linear function for ti, val from 1 to 2 based on distance to harmonic,
+# ti then gets multiplied by ni, the final harmonic series weight in above series_weight array
 
 # Formant weights/mp intervals, soon...
 
-# FUNCTIONS
 
+# FUNCTIONS
 def max_in_ft(yf, xf, audio_len):
     max_mag_idx = np.argmax(yf[:audio_len // 2], axis=0)  # get max idx
 
