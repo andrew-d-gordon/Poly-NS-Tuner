@@ -4,6 +4,7 @@ from poly_note_detection import *
 from freq_note_conversions import *
 from scale_detection import *
 from pitch_tracking import *
+from generating_midi_file import *
 from audio_stream_test import decibelScale
 
 
@@ -59,13 +60,15 @@ def poly_note_tuner(data, sr, num_candidates, num_pitches):
 # Take predictions from poly_note_tuner, pitch track them, send pitch tracked notes through to scale detection.
 def main():
     # CONSTANTS
-    num_pitches = 7
-    num_candidates = 50
+    num_pitches = 3
+    num_candidates = 70
     num_pitches_for_scale_detection = 3
-    min_pitch_track_frames = 2  # minimum num of frames for pitch to track
+    min_pitch_track_frames = 4  # minimum num of frames for pitch to track
 
     # LOAD SAMPLE/PREP BUFFER
-    data, sr = load('samples/piano_chords_melody_Cm_reverb_whitenoise.wav')
+    sample_name = 'piano_chords_Cm_vanilla'
+    sample_bpm = 135  # Ideally set to BPM of project audio is from or BPM of input audio
+    data, sr = load('samples/piano_chords_Cm_vanilla.wav', sr=None)
     audio_len = len(data)
     samples_per_buffer = 4096  # optionally seconds_per_buffer * sr
     hop_size = samples_per_buffer // 2
@@ -76,11 +79,11 @@ def main():
     frame_count = 0
 
     # INIT PITCH TRACK BUFFERS, SCALE DETECTION OBJECT
-    pitch_track_notes_all = []  # HAS NOTES AS: [MP, MAG, START_FRAME]
-    pitch_track_notes_set = []  # HAS NOTES AS: MP
+    pitch_track_notes_all = []  # HAS PREV NOTES AS: [MP, MAG, START_FRAME]
+    pitch_track_notes_set = []  # HAS PREV NOTES AS: MP
     recorded_notes = []  # HAS NOTES AS: [MP, MAG, START_FRAME, END_FRAME]
     recorded_notes_mp = []  # HAS NOTES AS: MP
-    all_note_predictions = []
+    # all_note_predictions = []
     n = NoteSet()
 
     while audio_to_process.size > 0:
@@ -100,7 +103,7 @@ def main():
 
         print("New ended notes:", new_pt_ended_notes)
 
-        # append new_ended_notes to recorded lists (one with mp, mag, start, and end data and one with just mp)
+        # Append new_ended_notes to recorded lists (one with mp, mag, start, and end data and one with just mp)
         for note in new_pt_ended_notes:
             # FILTER OUT NOTES WITH LESS THAN min_pitch_track_frames DURATION, ADD NOTES WITH GOOD LEN TO RECORDED_NOTES
             if note[3] - note[2] > min_pitch_track_frames:
@@ -122,6 +125,25 @@ def main():
             frame_count += 1
         else:
             break
+
+    # GENERATE MIDI FILE
+    sec_per_hop = seconds_per_hop(sr)
+
+    # Start time calculation equal to start_time * seconds_per_hop
+    recorded_notes_start_times = [note[2]*sec_per_hop for note in recorded_notes]
+
+    # Duration calculated via samples_per_hop * num frames lasted + 1, e.g. start frame 0, end frame 2, duration of 6144
+    recorded_notes_duration = [(note[3]-note[2]+1)*sec_per_hop for note in recorded_notes]
+
+    print("\nMidi File Generation...\n")
+    print("This is sr:", sr, ", This is sec_per_hop:", sec_per_hop)
+    print("This is recorded_notes:", recorded_notes)
+    print("This is recorded_notes_midi_predictions:", recorded_notes_mp)
+    print("This is recorded_notes_durations:", recorded_notes_duration)
+    print("This is recorded_notes_start_times:", recorded_notes_start_times)
+
+    score = make_midi_score(recorded_notes_mp, recorded_notes_duration, recorded_notes_start_times, sample_bpm)
+    write_score(score, sample_name)
 
     print("Fin")
 

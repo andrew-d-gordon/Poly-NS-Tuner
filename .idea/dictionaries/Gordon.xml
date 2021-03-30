@@ -2,10 +2,18 @@
   <dictionary name="Gordon">
     <words>
       <w>blackman</w>
+      <w>durs</w>
+      <w>fluidsynth</w>
       <w>freqs</w>
+      <w>micropitch</w>
+      <w>microtonal</w>
+      <w>microtones</w>
+      <w>pitchbend</w>
       <w>pred</w>
       <w>preds</w>
+      <w>proj</w>
       <w>reverb</w>
+      <w>twlvtet</w>
       <w>vals</w>
       <w>whitenoise</w>
     </words>
