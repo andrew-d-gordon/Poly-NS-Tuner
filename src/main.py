@@ -18,6 +18,15 @@ def split_wav_into_chunk(data, location_in_audio, samples_per_buffer, need_full_
             return data[location_in_audio:]  # PROCESS REMAINING SAMPLES/LESS THAN N SECONDS OF AUDIO
 
 
+# PRINTS FOR PEAK RETRIEVAL LISTS
+def peak_list_prints(current_peaks, current_peaks_midi_pitch, current_peaks_freqs, current_peaks_amps):
+    print("\nHere are feature lists for unique candidate peaks...\n")
+    print("Current peaks notes:", current_peaks)
+    print("Current peaks midi pitches:", current_peaks_midi_pitch)
+    print("Current peaks freqs:", current_peaks_freqs)
+    print("Current peaks amplitudes:", current_peaks_amps)
+
+
 # PREDICTS NUM_PITCHES PITCH PREDICTIONS AS MIDI_PITCH LIST
 def poly_note_tuner(data, sr, num_candidates, num_pitches):
     # COMPUTE FOURIER TRANSFORM (VIA DFT)
@@ -30,21 +39,14 @@ def poly_note_tuner(data, sr, num_candidates, num_pitches):
     current_peaks, current_peaks_freqs, current_peaks_amps = collect_peaks(ft_amp, xf, audio_len, num_candidates)
     current_peaks_midi_pitch = [note_to_midi_pitch(elem[0], elem[1]) for elem in current_peaks]
 
-    # PRINT CURRENT CANDIDATE PEAKS (NOTES, MIDI PITCHES, FREQS, AMPS)
-    '''print("\nHere are feature lists for unique candidate peaks...\n")
-    print("Current peaks notes:", current_peaks)
-    print("Current peaks midi pitches:", current_peaks_midi_pitch)
-    print("Current peaks freqs:", current_peaks_freqs)
-    print("Current peaks amplitudes:", current_peaks_amps)'''
+    # OPTIONAL PRINT CURRENT CANDIDATE PEAKS (NOTES, MIDI PITCHES, FREQS, AMPS)
+    # peak_list_prints(current_peaks, current_peaks_midi_pitch, current_peaks_freqs, current_peaks_amps)
 
     # CANDIDATE PEAK LIKELIHOOD CALCULATION AND FUNDAMENTAL SELECTION
     current_peak_weights = compute_peak_likelihood(current_peaks_midi_pitch, current_peaks_amps, num_candidates)
-    print("\nCurrent peaks weights:", current_peak_weights)
-
     fundamental_predictions = retrieve_n_best_fundamentals(current_peak_weights, current_peaks, num_pitches)
     fundamental_predictions_mp = [(note_to_midi_pitch(elem[0], elem[1]), elem[2]) for elem in fundamental_predictions]
-    print("Current fundamental predictions:", fundamental_predictions)
-    print("Current fundamental predictions mp:", fundamental_predictions_mp)
+    print("Current fundamental predictions MP:", fundamental_predictions_mp)
 
     return fundamental_predictions_mp
 
