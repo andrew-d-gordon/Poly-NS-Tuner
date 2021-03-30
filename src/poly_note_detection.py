@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 from scipy.fftpack import fft
-from scipy.signal import blackman
+from scipy.signal import blackman, kaiser
 import numpy as np
 import math
 from freq_note_conversions import freq_to_note
@@ -11,9 +11,15 @@ import heapq
 
 # Harmonic Series based on, e.g. C3, overtones = C4(+12), G4(+19), C5(+24), and E5(+28)...
 harmonic_series_mp = [12, 19, 24, 28, 31]
-harmonic_series_weight = [2, 1.8, 1.6, 1.4, 1.2]
+harmonic_series_weight = [2, 1.8, 1.6, 1.4, 1.2]  # change avg weight func to be val for abs(# steps away from harmonic)
 # think of more linear function for ti, val from 1 to 2 based on distance to harmonic,
 # ti then gets multiplied by ni, the final harmonic series weight in above series_weight array
+
+# WINDOW AND BUFFER SIZE
+# If need_full_buffer set to false for split_wav in main, window must be dynamically created in compute_ft
+buffer_size = 4096
+kaiser_window = kaiser(buffer_size, 14)
+blackman_window = blackman(buffer_size)
 
 # Formant weights/mp intervals, soon...
 
@@ -42,11 +48,13 @@ def fft_plot(yf, xf, audio_len):
 
 def compute_ft(audio, sr):
     audio_len = len(audio)
-    window = blackman(audio_len)  # optional windowing to aide spectral leakage
-    yf = fft(audio * window)
+
+    yf = fft(audio * kaiser_window)
     T = 1 / sr
     xf = np.linspace(0.0, 1.0 / (2.0 * T), audio_len // 2)
-    #fft_plot(yf, xf, audio_len)  # Optional fft plot
+
+    # Optional fft plot
+    # fft_plot(yf, xf, audio_len)
     return yf, xf, audio_len
 
 

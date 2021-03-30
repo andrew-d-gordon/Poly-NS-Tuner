@@ -32,7 +32,7 @@ data = wf.readframes(CHUNK)
 sizes = {1: 'B', 2: 'h', 4: 'i'}
 channels = wf.getnchannels()
 fmt_size = sizes[wf.getsampwidth()]
-#fmt = "<" + fmt_size*channels
+# fmt = "<" + fmt_size*channels
 
 # play stream (3)
 while len(data) > 0:
@@ -43,7 +43,7 @@ while len(data) > 0:
     fmt = "<{0}h".format(2*CHUNK)
     data_int = struct.unpack(fmt, data)
     poly_note_tuner(data_int, wf_sr)
-    #print(data_int)
+    # print(data_int)
 
 
 # stop stream (4)

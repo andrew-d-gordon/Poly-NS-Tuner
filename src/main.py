@@ -5,12 +5,16 @@ from freq_note_conversions import *
 from scale_detection import *
 from audio_stream_test import decibelScale
 
+
 # RETRIEVE samples_per_buffer/REMAINING SAMPLES OF FILE FOR POLY_NOTE_TUNER
-def split_wav_into_chunk(data, location_in_audio, samples_per_buffer):
+def split_wav_into_chunk(data, location_in_audio, samples_per_buffer, need_full_buffer=True):
     if len(data) - location_in_audio > samples_per_buffer:
         return data[location_in_audio:location_in_audio+samples_per_buffer]  # PROCESS ONE SECOND OF AUDIO
     else:
-        return data[location_in_audio:]  # PROCESS REMAINING SAMPLES/LESS THAN N SECONDS OF AUDIO
+        if need_full_buffer:
+            return np.array([])  # RETURN EMPTY LIST, DO NOT PROCESS REMAINING SAMPLES
+        else:
+            return data[location_in_audio:]  # PROCESS REMAINING SAMPLES/LESS THAN N SECONDS OF AUDIO
 
 
 # PREDICTS NUM_PITCHES PITCH PREDICTIONS AS MIDI_PITCH LIST
