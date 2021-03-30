@@ -62,10 +62,10 @@ def main():
     num_pitches = 7
     num_candidates = 50
     num_pitches_for_scale_detection = 3
-    min_pitch_track_frames = 3  # minimum num of frames for pitch to track
+    min_pitch_track_frames = 2  # minimum num of frames for pitch to track
 
     # LOAD SAMPLE/PREP BUFFER
-    data, sr = load('samples/piano_chords_melody_Cm_vanilla.wav')
+    data, sr = load('samples/piano_chords_melody_Cm_reverb_whitenoise.wav')
     audio_len = len(data)
     samples_per_buffer = 4096  # optionally seconds_per_buffer * sr
     hop_size = samples_per_buffer // 2
@@ -81,7 +81,7 @@ def main():
     recorded_notes = []  # HAS NOTES AS: [MP, MAG, START_FRAME, END_FRAME]
     recorded_notes_mp = []  # HAS NOTES AS: MP
     all_note_predictions = []
-    n = noteSet()
+    n = NoteSet()
 
     while audio_to_process.size > 0:
 
@@ -112,9 +112,9 @@ def main():
 
         # RUN SCALE PREDICTION IF ENOUGH NOTES IN PITCH TRACK BUFFER
         if len(recorded_notes_mp) > num_pitches_for_scale_detection:
-            n.setNoteAmounts(recorded_notes_mp)
-            n.findClosestScale()
-            print(n.closestScale)
+            n.set_note_amounts(recorded_notes_mp)
+            n.find_closest_scale()
+            print(n.closest_scale)
 
         # CHECK IF MORE AUDIO TO PROCESS, IF NOT, EXIT
         if audio_len - location_in_audio > 0:
