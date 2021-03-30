@@ -2,6 +2,12 @@
   <dictionary name="Gordon">
     <words>
       <w>blackman</w>
+      <w>freqs</w>
+      <w>pred</w>
+      <w>preds</w>
+      <w>reverb</w>
+      <w>vals</w>
+      <w>whitenoise</w>
     </words>
   </dictionary>
 </component>

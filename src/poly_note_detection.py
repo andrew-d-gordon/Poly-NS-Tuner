@@ -63,26 +63,29 @@ def convert_magnitude(yf):
 
 
 def collect_peaks(yf, xf, audio_len, num_candidates):
-    current_peaks = []  # list for peak notes and scales
+    current_peaks_ns = []  # list for peak notes and scales
+    current_peaks_nsm = []  # list for peak notes, scales, and mags
     current_peaks_freq = []  # list for peak frequencies
     current_peaks_amps = []  # list for peak amplitudes
 
-    while len(current_peaks) < num_candidates:
+    while len(current_peaks_ns) < num_candidates:
         # Grab maximum magnitude and frequency, magnitude for frequency set to 0, initial mag returned to candidate_mag
         max_mag_freq, candidate_mag = max_in_ft(yf, xf, audio_len)
 
         # Translate to key (candidate)
-        candidate_peak_ns = freq_to_note(max_mag_freq)
+        candidate_note_scale = freq_to_note(max_mag_freq)
+        candidate_peak_nsm = candidate_note_scale[0], candidate_note_scale[1], candidate_mag
 
         # Check if same pitch already in current peaks
-        if candidate_peak_ns not in current_peaks:
-            current_peaks.append(candidate_peak_ns)
+        if candidate_note_scale not in current_peaks_ns:
+            current_peaks_ns.append(candidate_note_scale)
+            current_peaks_nsm.append(candidate_peak_nsm)
             current_peaks_freq.append(max_mag_freq)
             current_peaks_amps.append(candidate_mag)
-            print("Candidate Peak Note, Freq, Magnitude (amp):", candidate_peak_ns, "|", max_mag_freq,
-                  "|", candidate_mag)
+            '''print("Candidate Peak Note, Freq, Magnitude (amp):", candidate_peak_nsm, "|", max_mag_freq,
+                  "|", candidate_mag)'''
 
-    return current_peaks, current_peaks_freq, current_peaks_amps
+    return current_peaks_nsm, current_peaks_freq, current_peaks_amps
 
 
 def retrieve_n_best_fundamentals(current_peak_weights, current_peaks, num_pitches):
@@ -137,7 +140,7 @@ def compute_peak_likelihood(current_peaks_mp, current_peaks_amps, num_candidates
             else:
                 continue
 
-        #print("This is weight for f:", current_peaks_mp[f], "->", f_weight)
+        # print("This is weight for f:", current_peaks_mp[f], "->", f_weight)
         current_peak_weights.append(f_weight)
 
     return current_peak_weights
