@@ -8,6 +8,30 @@ from generating_midi_file import *
 from audio_stream_test import decibelScale
 
 
+# FOR GENERATION OF MIDI FILE CORRESPONDING TO RECORDED NOTE PREDICTIONS
+def midi_generation(recorded_notes, recorded_notes_mp, sr, sample_name, sample_bpm):
+    # Get num seconds per hop to help calculate duration
+    sec_per_hop = seconds_per_hop(sr)
+
+    # Start time calculation equal to start_time * seconds_per_hop
+    recorded_notes_start_times = [note[2] * sec_per_hop for note in recorded_notes]
+
+    # Duration calculated via samples_per_hop * num frames lasted + 1, e.g. start frame 0, end frame 2, duration of 6144
+    recorded_notes_duration = [(note[3] - note[2] + 1) * sec_per_hop for note in recorded_notes]
+
+    '''
+    print("\nMidi File Generation...\n")
+    print("This is sr:", sr, ", This is sec_per_hop:", sec_per_hop)
+    print("This is recorded_notes:", recorded_notes)
+    print("This is recorded_notes_midi_predictions:", recorded_notes_mp)
+    print("This is recorded_notes_durations:", recorded_notes_duration)
+    print("This is recorded_notes_start_times:", recorded_notes_start_times)
+    '''
+
+    score = make_midi_score(recorded_notes_mp, recorded_notes_duration, recorded_notes_start_times, sample_bpm)
+    write_score(score, sample_name)
+
+
 # RETRIEVE samples_per_buffer/REMAINING SAMPLES OF FILE FOR POLY_NOTE_TUNER
 def split_wav_into_chunk(data, location_in_audio, samples_per_buffer, need_full_buffer=True):
     if len(data) - location_in_audio > samples_per_buffer:
@@ -88,6 +112,7 @@ def main():
 
     while audio_to_process.size > 0:
 
+        print("\n=== FRAME ", frame_count, "===")
         # PROCESS AUDIO, MOVE AUDIO FILE LOCATION PTR AHEAD
         new_note_predictions = poly_note_tuner(audio_to_process, sr, num_candidates, num_pitches)
         location_in_audio += hop_size
@@ -127,23 +152,7 @@ def main():
             break
 
     # GENERATE MIDI FILE
-    sec_per_hop = seconds_per_hop(sr)
-
-    # Start time calculation equal to start_time * seconds_per_hop
-    recorded_notes_start_times = [note[2]*sec_per_hop for note in recorded_notes]
-
-    # Duration calculated via samples_per_hop * num frames lasted + 1, e.g. start frame 0, end frame 2, duration of 6144
-    recorded_notes_duration = [(note[3]-note[2]+1)*sec_per_hop for note in recorded_notes]
-
-    print("\nMidi File Generation...\n")
-    print("This is sr:", sr, ", This is sec_per_hop:", sec_per_hop)
-    print("This is recorded_notes:", recorded_notes)
-    print("This is recorded_notes_midi_predictions:", recorded_notes_mp)
-    print("This is recorded_notes_durations:", recorded_notes_duration)
-    print("This is recorded_notes_start_times:", recorded_notes_start_times)
-
-    score = make_midi_score(recorded_notes_mp, recorded_notes_duration, recorded_notes_start_times, sample_bpm)
-    write_score(score, sample_name)
+    midi_generation(recorded_notes, recorded_notes_mp, sr, sample_name, sample_bpm)
 
     print("Fin")
 
