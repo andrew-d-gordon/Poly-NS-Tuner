@@ -8,6 +8,15 @@ from generating_midi_file import *
 from audio_stream_test import decibelScale
 
 
+def midi_gen_prints(sr, sec_per_hop, recorded_notes, recorded_notes_mp, recorded_notes_duration, recorded_notes_st):
+    print("\nMidi File Generation...\n")
+    print("This is sr:", sr, ", This is sec_per_hop:", sec_per_hop)
+    print("This is recorded_notes:", recorded_notes)
+    print("This is recorded_notes_midi_predictions:", recorded_notes_mp)
+    print("This is recorded_notes_durations:", recorded_notes_duration)
+    print("This is recorded_notes_start_times:", recorded_notes_st)
+
+
 # FOR GENERATION OF MIDI FILE CORRESPONDING TO RECORDED NOTE PREDICTIONS
 def midi_generation(recorded_notes, recorded_notes_mp, sr, sample_name, sample_bpm):
     # Get num seconds per hop to help calculate duration
@@ -19,15 +28,11 @@ def midi_generation(recorded_notes, recorded_notes_mp, sr, sample_name, sample_b
     # Duration calculated via samples_per_hop * num frames lasted + 1, e.g. start frame 0, end frame 2, duration of 6144
     recorded_notes_duration = [(note[3] - note[2] + 1) * sec_per_hop for note in recorded_notes]
 
-    '''
-    print("\nMidi File Generation...\n")
-    print("This is sr:", sr, ", This is sec_per_hop:", sec_per_hop)
-    print("This is recorded_notes:", recorded_notes)
-    print("This is recorded_notes_midi_predictions:", recorded_notes_mp)
-    print("This is recorded_notes_durations:", recorded_notes_duration)
-    print("This is recorded_notes_start_times:", recorded_notes_start_times)
-    '''
+    # Optional prints for midi generation
+    ''' midi_gen_prints(sr, sec_per_hop, recorded_notes, recorded_notes_mp, recorded_notes_duration,
+                   recorded_notes_start_times) '''
 
+    # Make score out of all pitch tracked note information
     score = make_midi_score(recorded_notes_mp, recorded_notes_duration, recorded_notes_start_times, sample_bpm)
     write_score(score, sample_name)
 
@@ -75,8 +80,6 @@ def poly_note_tuner(data, sr, num_candidates, num_pitches):
 
     return fundamental_predictions_mp
 
-    # DURATION/END AND START NOTE MONITORING, pass most recent guessed notes list...
-
 
 # main()
 # Set # of candidates pitches and # of pitches to predict,
@@ -85,7 +88,7 @@ def poly_note_tuner(data, sr, num_candidates, num_pitches):
 def main():
     # CONSTANTS
     num_pitches = 3
-    num_candidates = 70
+    num_candidates = 20
     num_pitches_for_scale_detection = 3
     min_pitch_track_frames = 4  # minimum num of frames for pitch to track
 
@@ -103,11 +106,10 @@ def main():
     frame_count = 0
 
     # INIT PITCH TRACK BUFFERS, SCALE DETECTION OBJECT
-    pitch_track_notes_all = []  # HAS PREV NOTES AS: [MP, MAG, START_FRAME]
-    pitch_track_notes_set = []  # HAS PREV NOTES AS: MP
+    pitch_track_notes_raw = []  # HAS PREV NOTES AS: [MP, MAG, START_FRAME]
+    pitch_track_notes_mp = []  # HAS PREV NOTES AS: MP
     recorded_notes = []  # HAS NOTES AS: [MP, MAG, START_FRAME, END_FRAME]
     recorded_notes_mp = []  # HAS NOTES AS: MP
-    # all_note_predictions = []
     n = NoteSet()
 
     while audio_to_process.size > 0:
@@ -117,14 +119,9 @@ def main():
         new_note_predictions = poly_note_tuner(audio_to_process, sr, num_candidates, num_pitches)
         location_in_audio += hop_size
 
-        ''' #optional note_predictions list to maintain, can replace note buffer for noteSet object
-        for note in new_note_predictions:
-            all_note_predictions.append(note[0])
-        '''
-
         # FORWARD PREDICTED NOTES TO PITCH TRACK MAINTENANCE
         new_pt_ended_notes, pitch_track_notes_all, pitch_track_notes_set = \
-            update_pitch_track(new_note_predictions, pitch_track_notes_all, pitch_track_notes_set, frame_count)
+            update_pitch_track(new_note_predictions, pitch_track_notes_raw, pitch_track_notes_mp, frame_count)
 
         print("New ended notes:", new_pt_ended_notes)
 
@@ -152,7 +149,7 @@ def main():
             break
 
     # GENERATE MIDI FILE
-    midi_generation(recorded_notes, recorded_notes_mp, sr, sample_name, sample_bpm)
+    # midi_generation(recorded_notes, recorded_notes_mp, sr, sample_name, sample_bpm)
 
     print("Fin")
 
