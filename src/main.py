@@ -125,7 +125,6 @@ def main():
         if len(new_note_predictions) > 0:
             new_pt_ended_notes, pitch_track_notes_all, pitch_track_notes_set = \
                 update_pitch_track(new_note_predictions, pitch_track_notes_raw, pitch_track_notes_mp, frame_count)
-
         print("New ended notes:", new_pt_ended_notes)
 
         # Append new_ended_notes to recorded lists (one with mp, mag, start, and end data and one with just mp)
