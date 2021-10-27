@@ -61,12 +61,12 @@ def update_pitch_track(new_note_predictions, pitch_track_notes_all, pitch_track_
 
     # FIND FINISHED NOTES, INIT ENDED_NOTES LIST
     new_note_preds_mps = [elem[0] for elem in new_note_predictions]
-    print("\nNew note pred mps:", new_note_preds_mps)
+    #print("\nNew note pred mps:", new_note_preds_mps)
 
     expired_notes = find_finished_notes(new_note_preds_mps, pitch_track_notes_all, pitch_track_notes_set, frame_count)
     ended_notes = expired_notes
 
-    print("Current PT notes:", pitch_track_notes_set)
+    #print("Current PT notes:", pitch_track_notes_set)
 
     for note in new_note_predictions:
         # APPEND START_FRAME TO NOTE (as list), SEARCH FOR MATCH IN PITCH_TRACKS

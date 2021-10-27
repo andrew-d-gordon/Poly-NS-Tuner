@@ -10,8 +10,8 @@ import heapq
 # CONSTANTS
 
 # Harmonic Series based on, e.g. C3, overtones = C4(+12), G4(+19), C5(+24), and E5(+28)...
-harmonic_series_mp = [12, 19, 24, 28, 31]
-harmonic_series_weight = [2, 1.8, 1.6, 1.4, 1.2]  # change avg weight func to be val for abs(# steps away from harmonic)
+harmonic_series_mp = [0, 12, 19, 24, 28, 31]
+harmonic_series_weight = [3, 2, 1.8, 1.6, 1.4, 1.2]  # change avg weight func to be val for abs(# steps away from harmonic)
 # think of more linear function for ti, val from 1 to 2 based on distance to harmonic,
 # ti then gets multiplied by ni, the final harmonic series weight in above series_weight array
 
@@ -28,7 +28,7 @@ blackman_window = blackman(buffer_size)
 def max_in_ft(yf, xf, audio_len):
     max_mag_idx = np.argmax(yf[:audio_len // 2], axis=0)  # get max idx
 
-    if xf[max_mag_idx] < 20 or xf[max_mag_idx] > 20000: # IF FREQ NOT IN RANGE, NULL PEAK, RUN AGAIN
+    if xf[max_mag_idx] < 20 or xf[max_mag_idx] > 20000:  # IF FREQ NOT IN RANGE, NULL PEAK, RUN AGAIN
         yf[max_mag_idx] = 0
         return max_in_ft(yf, xf, audio_len)
 
@@ -88,21 +88,6 @@ def collect_peaks(yf, xf, audio_len, num_candidates):
     return current_peaks_nsm, current_peaks_freq, current_peaks_amps
 
 
-def retrieve_n_best_fundamentals(current_peak_weights, current_peaks, num_pitches):
-    fundamental_predictions = []
-    pitches_selected = 0
-    while pitches_selected < num_pitches:
-        # Select largest weight, find idx and corresponding note, append to prediction list
-        best_f0_idx = np.argmax(current_peak_weights)
-        fundamental_predictions.append(current_peaks[best_f0_idx])
-
-        # Void value at most recent max, continue search for f0's until num_pitches f0's have been found
-        current_peak_weights[best_f0_idx] = 0
-        pitches_selected += 1
-
-    return fundamental_predictions
-
-
 def peak_to_f_harmonic_weight(f_mp, p_mp):  # Provides value of ti*ni
     if p_mp < f_mp:  # Base Case, returns if peak < f0
         return 1
@@ -144,3 +129,25 @@ def compute_peak_likelihood(current_peaks_mp, current_peaks_amps, num_candidates
         current_peak_weights.append(f_weight)
 
     return current_peak_weights
+
+
+def retrieve_n_best_fundamentals(current_peak_weights, current_peaks, num_pitches, min_f_weight=3):
+    fundamental_predictions = []
+    pitches_selected = 0
+    while pitches_selected < num_pitches:
+        # Select largest weight, find idx and corresponding note, append to prediction list
+        best_f0_idx = np.argmax(current_peak_weights)
+
+        # If weight is larger > minimum fundamental weight, add to fundamental prediction list
+        if current_peak_weights[best_f0_idx] > min_f_weight:
+            fundamental_predictions.append(current_peaks[best_f0_idx])
+            pitches_selected += 1
+            print("Pitch:", current_peaks[best_f0_idx], "Weight:", current_peak_weights[best_f0_idx])
+        else:
+            break
+
+        # Void value at most recent max, continue search for f0's until num_pitches f0's have been found
+        current_peak_weights[best_f0_idx] = 0
+
+    return fundamental_predictions
+

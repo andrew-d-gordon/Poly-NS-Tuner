@@ -87,15 +87,15 @@ def poly_note_tuner(data, sr, num_candidates, num_pitches):
 # Take predictions from poly_note_tuner, pitch track them, send pitch tracked notes through to scale detection.
 def main():
     # CONSTANTS
-    num_pitches = 3
+    num_pitches = 2
     num_candidates = 20
     num_pitches_for_scale_detection = 3
     min_pitch_track_frames = 4  # minimum num of frames for pitch to track
 
     # LOAD SAMPLE/PREP BUFFER
-    sample_name = 'piano_chords_Cm_vanilla'
+    sample_name = 'piano_single_long_C2_vanilla'
     sample_bpm = 135  # Ideally set to BPM of project audio is from or BPM of input audio
-    data, sr = load('samples/piano_chords_Cm_vanilla.wav', sr=None)
+    data, sr = load('samples/piano_single_long_C2_vanilla.wav', sr=None)
     audio_len = len(data)
     samples_per_buffer = 4096  # optionally seconds_per_buffer * sr
     hop_size = samples_per_buffer // 2
@@ -108,8 +108,8 @@ def main():
     # INIT PITCH TRACK BUFFERS, SCALE DETECTION OBJECT
     pitch_track_notes_raw = []  # HAS PREV NOTES AS: [MP, MAG, START_FRAME]
     pitch_track_notes_mp = []  # HAS PREV NOTES AS: MP
-    recorded_notes = []  # HAS NOTES AS: [MP, MAG, START_FRAME, END_FRAME]
-    recorded_notes_mp = []  # HAS NOTES AS: MP
+    recorded_notes = []  # HAS NOTES NOTES AS: [MP, MAG, START_FRAME, END_FRAME]
+    recorded_notes_mp = []  # HAS  AS: MP
     n = NoteSet()
 
     while audio_to_process.size > 0:
@@ -119,9 +119,12 @@ def main():
         new_note_predictions = poly_note_tuner(audio_to_process, sr, num_candidates, num_pitches)
         location_in_audio += hop_size
 
-        # FORWARD PREDICTED NOTES TO PITCH TRACK MAINTENANCE
-        new_pt_ended_notes, pitch_track_notes_all, pitch_track_notes_set = \
-            update_pitch_track(new_note_predictions, pitch_track_notes_raw, pitch_track_notes_mp, frame_count)
+        # FORWARD PREDICTED NOTES TO PITCH TRACK MAINTENANCE (IF VALID PREDICTIONS AVAILABLE)
+        # Refresh new_pt_ended_notes to be []
+        new_pt_ended_notes = []
+        if len(new_note_predictions) > 0:
+            new_pt_ended_notes, pitch_track_notes_all, pitch_track_notes_set = \
+                update_pitch_track(new_note_predictions, pitch_track_notes_raw, pitch_track_notes_mp, frame_count)
 
         print("New ended notes:", new_pt_ended_notes)
 
