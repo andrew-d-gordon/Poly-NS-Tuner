@@ -2,10 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="9d0cf117-42b8-48dd-bc31-234c8dd594ec" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/Poly NS Tuner.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Poly NS Tuner.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/midi_output/piano_chords_Cm_vanilla_midi_guess.mid" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pitch_tracking.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/pitch_tracking.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/poly_note_detection.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/poly_note_detection.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -33,7 +33,6 @@
   <component name="ProjectId" id="1pEvNmM721C7lNZVPImkLbtxmiZ" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
-    <option name="showExcludedFiles" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
@@ -182,28 +181,5 @@
       <updated>1614761026379</updated>
     </task>
     <servers />
-  </component>
-  <component name="WindowStateProjectService">
-    <state x="2605" y="194" key="FileChooserDialogImpl" timestamp="1630434682176">
-      <screen x="1920" y="0" width="1920" height="1040" />
-    </state>
-    <state x="2605" y="194" key="FileChooserDialogImpl/0.0.1536.824/1920.0.1920.1040@1920.0.1920.1040" timestamp="1630434682176" />
-    <state x="548" y="154" key="FileChooserDialogImpl/0.0.1536.824@0.0.1536.824" timestamp="1628989448510" />
-    <state width="1515" height="178" key="GridCell.Tab.0.bottom" timestamp="1626534686981">
-      <screen x="0" y="0" width="1536" height="824" />
-    </state>
-    <state width="1515" height="178" key="GridCell.Tab.0.bottom/0.0.1536.824/1920.0.1920.1040@0.0.1536.824" timestamp="1626534686981" />
-    <state width="1515" height="178" key="GridCell.Tab.0.center" timestamp="1626534686981">
-      <screen x="0" y="0" width="1536" height="824" />
-    </state>
-    <state width="1515" height="178" key="GridCell.Tab.0.center/0.0.1536.824/1920.0.1920.1040@0.0.1536.824" timestamp="1626534686981" />
-    <state width="1515" height="178" key="GridCell.Tab.0.left" timestamp="1626534686981">
-      <screen x="0" y="0" width="1536" height="824" />
-    </state>
-    <state width="1515" height="178" key="GridCell.Tab.0.left/0.0.1536.824/1920.0.1920.1040@0.0.1536.824" timestamp="1626534686981" />
-    <state width="1515" height="178" key="GridCell.Tab.0.right" timestamp="1626534686981">
-      <screen x="0" y="0" width="1536" height="824" />
-    </state>
-    <state width="1515" height="178" key="GridCell.Tab.0.right/0.0.1536.824/1920.0.1920.1040@0.0.1536.824" timestamp="1626534686981" />
   </component>
 </project>

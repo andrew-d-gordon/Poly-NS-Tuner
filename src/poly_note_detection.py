@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 from scipy.fftpack import fft
-from scipy.signal import blackman, kaiser
+from scipy.signal.windows import blackman, kaiser
 import numpy as np
 import math
 from freq_note_conversions import freq_to_note

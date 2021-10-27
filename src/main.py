@@ -5,7 +5,7 @@ from freq_note_conversions import *
 from scale_detection import *
 from pitch_tracking import *
 from generating_midi_file import *
-from audio_stream_test import decibelScale
+# from audio_stream_test import decibelScale
 
 
 def midi_gen_prints(sr, sec_per_hop, recorded_notes, recorded_notes_mp, recorded_notes_duration, recorded_notes_st):
