@@ -1,4 +1,4 @@
-# Mission for the Poly Note Tuner
+# Mission for the Poly NS Tuner
 The reason for the existence of this library (and soon to be plugin) is to provide producers, musicians or any auditory 
 inclined personnel with their own, digital version of perfect pitch. The ability to chop and work with multiple samples
 or even stems from other artists most often involves the work of parsing scale and pitch information. Having the ability
