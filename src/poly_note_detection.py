@@ -4,6 +4,7 @@ from scipy.signal.windows import blackman, kaiser
 import numpy as np
 import math
 from freq_note_conversions import freq_to_note
+
 # from scipy.io import wavfile as wav
 import heapq
 
@@ -11,7 +12,14 @@ import heapq
 
 # Harmonic Series based on, e.g. C3, overtones = C4(+12), G4(+19), C5(+24), and E5(+28)...
 harmonic_series_mp = [0, 12, 19, 24, 28, 31]
-harmonic_series_weight = [3, 2, 1.8, 1.6, 1.4, 1.2]  # change avg weight func to be val for abs(# steps away from harmonic)
+harmonic_series_weight = [
+    3,
+    2,
+    1.8,
+    1.6,
+    1.4,
+    1.2,
+]  # change avg weight func to be val for abs(# steps away from harmonic)
 # think of more linear function for ti, val from 1 to 2 based on distance to harmonic,
 # ti then gets multiplied by ni, the final harmonic series weight in above series_weight array
 
@@ -26,9 +34,11 @@ blackman_window = blackman(buffer_size)
 
 # FUNCTIONS
 def max_in_ft(yf, xf, audio_len):
-    max_mag_idx = np.argmax(yf[:audio_len // 2], axis=0)  # get max idx
+    max_mag_idx = np.argmax(yf[: audio_len // 2], axis=0)  # get max idx
 
-    if xf[max_mag_idx] < 20 or xf[max_mag_idx] > 20000:  # IF FREQ NOT IN RANGE, NULL PEAK, RUN AGAIN
+    if (
+        xf[max_mag_idx] < 20 or xf[max_mag_idx] > 20000
+    ):  # IF FREQ NOT IN RANGE, NULL PEAK, RUN AGAIN
         yf[max_mag_idx] = 0
         return max_in_ft(yf, xf, audio_len)
 
@@ -39,7 +49,7 @@ def max_in_ft(yf, xf, audio_len):
 
 def fft_plot(yf, xf, audio_len):
     fig, ax = plt.subplots()
-    ax.plot(xf, 2.0 / audio_len * np.abs(yf[:audio_len // 2]))
+    ax.plot(xf, 2.0 / audio_len * np.abs(yf[: audio_len // 2]))
     plt.grid()
     plt.xlabel("Frequency-->")
     plt.ylabel("Magnitude")
@@ -74,7 +84,11 @@ def collect_peaks(yf, xf, audio_len, num_candidates):
 
         # Translate to key (candidate)
         candidate_note_scale = freq_to_note(max_mag_freq)
-        candidate_peak_nsm = candidate_note_scale[0], candidate_note_scale[1], candidate_mag
+        candidate_peak_nsm = (
+            candidate_note_scale[0],
+            candidate_note_scale[1],
+            candidate_mag,
+        )
 
         # Check if same pitch already in current peaks
         if candidate_note_scale not in current_peaks_ns:
@@ -82,8 +96,8 @@ def collect_peaks(yf, xf, audio_len, num_candidates):
             current_peaks_nsm.append(candidate_peak_nsm)
             current_peaks_freq.append(max_mag_freq)
             current_peaks_amps.append(candidate_mag)
-            '''print("Candidate Peak Note, Freq, Magnitude (amp):", candidate_peak_nsm, "|", max_mag_freq,
-                  "|", candidate_mag)'''
+            """print("Candidate Peak Note, Freq, Magnitude (amp):", candidate_peak_nsm, "|", max_mag_freq,
+                  "|", candidate_mag)"""
 
     return current_peaks_nsm, current_peaks_freq, current_peaks_amps
 
@@ -93,14 +107,14 @@ def peak_to_f_harmonic_weight(f_mp, p_mp):  # Provides value of ti*ni
         return 1
 
     for idx in range(len(harmonic_series_mp)):
-        if f_mp+harmonic_series_mp[idx] == p_mp:
+        if f_mp + harmonic_series_mp[idx] == p_mp:
             return harmonic_series_weight[idx]  # Peak is a multiple of F0
 
     # Peak is not a multiple of f0
     return 1
 
 
-'''
+"""
 Calculation behind weight function for peak's likelihood to be fundamental...
 
 L(f) = Summation(i=0,k){ai*ti*ni}
@@ -108,7 +122,7 @@ Where k is number of peaks in the spectrum,
 -ai is a factor depending on the amplitude of the ith peak,
 -ti depends on how closely the ith peak is tuned to a multiple of fi
 -ni depends on whether the peak is closest to a low or high multiple of f
-'''
+"""
 
 
 def compute_peak_likelihood(current_peaks_mp, current_peaks_amps, num_candidates):
@@ -120,7 +134,9 @@ def compute_peak_likelihood(current_peaks_mp, current_peaks_amps, num_candidates
             peak_weight = 0  # ai*ni*ti
             if i != f:  # skip fundamental whose likelihood is being calculated
                 peak_weight += current_peaks_amps[i]  # ai
-                peak_weight *= peak_to_f_harmonic_weight(current_peaks_mp[f], current_peaks_mp[i])  # ni*ti
+                peak_weight *= peak_to_f_harmonic_weight(
+                    current_peaks_mp[f], current_peaks_mp[i]
+                )  # ni*ti
                 f_weight += peak_weight
             else:
                 continue
@@ -131,7 +147,9 @@ def compute_peak_likelihood(current_peaks_mp, current_peaks_amps, num_candidates
     return current_peak_weights
 
 
-def retrieve_n_best_fundamentals(current_peak_weights, current_peaks, num_pitches, min_f_weight=3):
+def retrieve_n_best_fundamentals(
+    current_peak_weights, current_peaks, num_pitches, min_f_weight=3
+):
     fundamental_predictions = []
     pitches_selected = 0
     while pitches_selected < num_pitches:
@@ -142,7 +160,12 @@ def retrieve_n_best_fundamentals(current_peak_weights, current_peaks, num_pitche
         if current_peak_weights[best_f0_idx] > min_f_weight:
             fundamental_predictions.append(current_peaks[best_f0_idx])
             pitches_selected += 1
-            print("Pitch:", current_peaks[best_f0_idx], "Weight:", current_peak_weights[best_f0_idx])
+            print(
+                "Pitch:",
+                current_peaks[best_f0_idx],
+                "Weight:",
+                current_peak_weights[best_f0_idx],
+            )
         else:
             break
 
@@ -150,4 +173,3 @@ def retrieve_n_best_fundamentals(current_peak_weights, current_peaks, num_pitche
         current_peak_weights[best_f0_idx] = 0
 
     return fundamental_predictions
-

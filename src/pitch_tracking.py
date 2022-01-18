@@ -20,7 +20,9 @@ def pitch_track_prints(ended_notes, pitch_track_notes_all, pitch_track_notes_set
 
 
 # FIND ALL OLD NOTES IN PITCH TRACK LIST, RECORD AS ENDED NOTES
-def find_finished_notes(new_note_preds_mps, pitch_track_notes_all, pitch_track_notes_set, frame_count):
+def find_finished_notes(
+    new_note_preds_mps, pitch_track_notes_all, pitch_track_notes_set, frame_count
+):
 
     # INIT NOTES_TO_END RETURN LIST
     notes_to_end = []
@@ -53,7 +55,9 @@ def find_finished_notes(new_note_preds_mps, pitch_track_notes_all, pitch_track_n
 # frame_count arg serves to represent the current frame which has been processed.
 # Notes in pitch_tracked_notes are of the form: [midi_pitch, amplitude, start_frame]
 # Notes in ended_notes are of the form: [midi_pitch, amplitude, start_frame, end_frame]
-def update_pitch_track(new_note_predictions, pitch_track_notes_all, pitch_track_notes_set, frame_count):
+def update_pitch_track(
+    new_note_predictions, pitch_track_notes_all, pitch_track_notes_set, frame_count
+):
 
     if len(pitch_track_notes_all) > 7:
         print("EXCEEDED LENGTH")
@@ -61,12 +65,14 @@ def update_pitch_track(new_note_predictions, pitch_track_notes_all, pitch_track_
 
     # FIND FINISHED NOTES, INIT ENDED_NOTES LIST
     new_note_preds_mps = [elem[0] for elem in new_note_predictions]
-    #print("\nNew note pred mps:", new_note_preds_mps)
+    # print("\nNew note pred mps:", new_note_preds_mps)
 
-    expired_notes = find_finished_notes(new_note_preds_mps, pitch_track_notes_all, pitch_track_notes_set, frame_count)
+    expired_notes = find_finished_notes(
+        new_note_preds_mps, pitch_track_notes_all, pitch_track_notes_set, frame_count
+    )
     ended_notes = expired_notes
 
-    #print("Current PT notes:", pitch_track_notes_set)
+    # print("Current PT notes:", pitch_track_notes_set)
 
     for note in new_note_predictions:
         # APPEND START_FRAME TO NOTE (as list), SEARCH FOR MATCH IN PITCH_TRACKS
@@ -80,7 +86,9 @@ def update_pitch_track(new_note_predictions, pitch_track_notes_all, pitch_track_
 
         else:
             index_of_note_in_pitch_track = pitch_track_notes_set.index(_note[0])
-            amp_pitch_track_note = pitch_track_notes_all[index_of_note_in_pitch_track][1]
+            amp_pitch_track_note = pitch_track_notes_all[index_of_note_in_pitch_track][
+                1
+            ]
 
             # IF CANDIDATE NOTE LOUDER THAN SAME TRACKED NOTE: END CURRENT PT NOTE, OVERWRITE MAG, SF W/CANDIDATE INFO
             # ELSE: UPDATE NOTE IN PITCH_TRACK AMP TO HAVE NEW (SMALLER) NOTE AMP

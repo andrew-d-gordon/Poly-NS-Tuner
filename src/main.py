@@ -5,10 +5,18 @@ from freq_note_conversions import *
 from scale_detection import *
 from pitch_tracking import *
 from generating_midi_file import *
+
 # from audio_stream_test import decibelScale
 
 
-def midi_gen_prints(sr, sec_per_hop, recorded_notes, recorded_notes_mp, recorded_notes_duration, recorded_notes_st):
+def midi_gen_prints(
+    sr,
+    sec_per_hop,
+    recorded_notes,
+    recorded_notes_mp,
+    recorded_notes_duration,
+    recorded_notes_st,
+):
     print("\nMidi File Generation...\n")
     print("This is sr:", sr, ", This is sec_per_hop:", sec_per_hop)
     print("This is recorded_notes:", recorded_notes)
@@ -26,30 +34,45 @@ def midi_generation(recorded_notes, recorded_notes_mp, sr, sample_name, sample_b
     recorded_notes_start_times = [note[2] * sec_per_hop for note in recorded_notes]
 
     # Duration calculated via samples_per_hop * num frames lasted + 1, e.g. start frame 0, end frame 2, duration of 6144
-    recorded_notes_duration = [(note[3] - note[2] + 1) * sec_per_hop for note in recorded_notes]
+    recorded_notes_duration = [
+        (note[3] - note[2] + 1) * sec_per_hop for note in recorded_notes
+    ]
 
     # Optional prints for midi generation
-    ''' midi_gen_prints(sr, sec_per_hop, recorded_notes, recorded_notes_mp, recorded_notes_duration,
-                   recorded_notes_start_times) '''
+    """ midi_gen_prints(sr, sec_per_hop, recorded_notes, recorded_notes_mp, recorded_notes_duration,
+                   recorded_notes_start_times) """
 
     # Make score out of all pitch tracked note information
-    score = make_midi_score(recorded_notes_mp, recorded_notes_duration, recorded_notes_start_times, sample_bpm)
+    score = make_midi_score(
+        recorded_notes_mp,
+        recorded_notes_duration,
+        recorded_notes_start_times,
+        sample_bpm,
+    )
     write_score(score, sample_name)
 
 
 # RETRIEVE samples_per_buffer/REMAINING SAMPLES OF FILE FOR POLY_NOTE_TUNER
-def split_wav_into_chunk(data, location_in_audio, samples_per_buffer, need_full_buffer=True):
+def split_wav_into_chunk(
+    data, location_in_audio, samples_per_buffer, need_full_buffer=True
+):
     if len(data) - location_in_audio > samples_per_buffer:
-        return data[location_in_audio:location_in_audio+samples_per_buffer]  # PROCESS ONE SECOND OF AUDIO
+        return data[
+            location_in_audio : location_in_audio + samples_per_buffer
+        ]  # PROCESS ONE SECOND OF AUDIO
     else:
         if need_full_buffer:
             return np.array([])  # RETURN EMPTY LIST, DO NOT PROCESS REMAINING SAMPLES
         else:
-            return data[location_in_audio:]  # PROCESS REMAINING SAMPLES/LESS THAN N SECONDS OF AUDIO
+            return data[
+                location_in_audio:
+            ]  # PROCESS REMAINING SAMPLES/LESS THAN N SECONDS OF AUDIO
 
 
 # PRINTS FOR PEAK RETRIEVAL LISTS
-def peak_list_prints(current_peaks, current_peaks_midi_pitch, current_peaks_freqs, current_peaks_amps):
+def peak_list_prints(
+    current_peaks, current_peaks_midi_pitch, current_peaks_freqs, current_peaks_amps
+):
     print("\nHere are feature lists for unique candidate peaks...\n")
     print("Current peaks notes:", current_peaks)
     print("Current peaks midi pitches:", current_peaks_midi_pitch)
@@ -66,16 +89,27 @@ def poly_note_tuner(data, sr, num_candidates, num_pitches):
     ft_amp = convert_magnitude(ft)
 
     # CANDIDATE PEAK SELECTION
-    current_peaks, current_peaks_freqs, current_peaks_amps = collect_peaks(ft_amp, xf, audio_len, num_candidates)
-    current_peaks_midi_pitch = [note_to_midi_pitch(elem[0], elem[1]) for elem in current_peaks]
+    current_peaks, current_peaks_freqs, current_peaks_amps = collect_peaks(
+        ft_amp, xf, audio_len, num_candidates
+    )
+    current_peaks_midi_pitch = [
+        note_to_midi_pitch(elem[0], elem[1]) for elem in current_peaks
+    ]
 
     # OPTIONAL PRINT CURRENT CANDIDATE PEAKS (NOTES, MIDI PITCHES, FREQS, AMPS)
     # peak_list_prints(current_peaks, current_peaks_midi_pitch, current_peaks_freqs, current_peaks_amps)
 
     # CANDIDATE PEAK LIKELIHOOD CALCULATION AND FUNDAMENTAL SELECTION
-    current_peak_weights = compute_peak_likelihood(current_peaks_midi_pitch, current_peaks_amps, num_candidates)
-    fundamental_predictions = retrieve_n_best_fundamentals(current_peak_weights, current_peaks, num_pitches)
-    fundamental_predictions_mp = [(note_to_midi_pitch(elem[0], elem[1]), elem[2]) for elem in fundamental_predictions]
+    current_peak_weights = compute_peak_likelihood(
+        current_peaks_midi_pitch, current_peaks_amps, num_candidates
+    )
+    fundamental_predictions = retrieve_n_best_fundamentals(
+        current_peak_weights, current_peaks, num_pitches
+    )
+    fundamental_predictions_mp = [
+        (note_to_midi_pitch(elem[0], elem[1]), elem[2])
+        for elem in fundamental_predictions
+    ]
     print("Current fundamental predictions MP:", fundamental_predictions_mp)
 
     return fundamental_predictions_mp
@@ -93,9 +127,11 @@ def main():
     min_pitch_track_frames = 4  # minimum num of frames for pitch to track
 
     # LOAD SAMPLE/PREP BUFFER
-    sample_name = 'piano_single_long_C2_vanilla'
-    sample_bpm = 135  # Ideally set to BPM of project audio is from or BPM of input audio
-    data, sr = load('samples/piano_single_long_C2_vanilla.wav', sr=None)
+    sample_name = "piano_single_long_C2_vanilla"
+    sample_bpm = (
+        135  # Ideally set to BPM of project audio is from or BPM of input audio
+    )
+    data, sr = load("samples/piano_single_long_C2_vanilla.wav", sr=None)
     audio_len = len(data)
     samples_per_buffer = 4096  # optionally seconds_per_buffer * sr
     hop_size = samples_per_buffer // 2
@@ -116,15 +152,25 @@ def main():
 
         print("\n=== FRAME ", frame_count, "===")
         # PROCESS AUDIO, MOVE AUDIO FILE LOCATION PTR AHEAD
-        new_note_predictions = poly_note_tuner(audio_to_process, sr, num_candidates, num_pitches)
+        new_note_predictions = poly_note_tuner(
+            audio_to_process, sr, num_candidates, num_pitches
+        )
         location_in_audio += hop_size
 
         # FORWARD PREDICTED NOTES TO PITCH TRACK MAINTENANCE (IF VALID PREDICTIONS AVAILABLE)
         # Refresh new_pt_ended_notes to be []
         new_pt_ended_notes = []
         if len(new_note_predictions) > 0:
-            new_pt_ended_notes, pitch_track_notes_all, pitch_track_notes_set = \
-                update_pitch_track(new_note_predictions, pitch_track_notes_raw, pitch_track_notes_mp, frame_count)
+            (
+                new_pt_ended_notes,
+                pitch_track_notes_all,
+                pitch_track_notes_set,
+            ) = update_pitch_track(
+                new_note_predictions,
+                pitch_track_notes_raw,
+                pitch_track_notes_mp,
+                frame_count,
+            )
         print("New ended notes:", new_pt_ended_notes)
 
         # Append new_ended_notes to recorded lists (one with mp, mag, start, and end data and one with just mp)
@@ -145,7 +191,9 @@ def main():
 
         # CHECK IF MORE AUDIO TO PROCESS, IF NOT, EXIT
         if audio_len - location_in_audio > 0:
-            audio_to_process = split_wav_into_chunk(data, location_in_audio, samples_per_buffer)
+            audio_to_process = split_wav_into_chunk(
+                data, location_in_audio, samples_per_buffer
+            )
             frame_count += 1
         else:
             break

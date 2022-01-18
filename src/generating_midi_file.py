@@ -45,7 +45,9 @@ def make_midi_score(pitches, durs, start_times, bpm, pgm=1, drums=False):
         micros, twlvtet = math.modf(pitch)
 
         # create a new note
-        note = pretty_midi.Note(velocity=100, pitch=int(twlvtet), start=start, end=start + dur)
+        note = pretty_midi.Note(
+            velocity=100, pitch=int(twlvtet), start=start, end=start + dur
+        )
 
         # and note to the instrument
         ins.notes.append(note)
@@ -53,7 +55,9 @@ def make_midi_score(pitches, durs, start_times, bpm, pgm=1, drums=False):
         # if microtonal
         if micros != 0:
             # create a new pitch bend (4096 is a semitone in standard MIDI +/-2 pitchbend range)
-            micropitch = pretty_midi.PitchBend(pitch=int(round(micros * 4096)), time=start)
+            micropitch = pretty_midi.PitchBend(
+                pitch=int(round(micros * 4096)), time=start
+            )
 
             # and add it to the instrument
             ins.pitch_bends.append(micropitch)
@@ -69,7 +73,7 @@ def make_midi_score(pitches, durs, start_times, bpm, pgm=1, drums=False):
 
 
 def write_score(score, name):
-    file_path = 'midi_output/{0}_midi_guess.mid'.format(name)
+    file_path = "midi_output/{0}_midi_guess.mid".format(name)
     score.write(file_path)
     # y = score.fluidsynth(fs=44100)
 

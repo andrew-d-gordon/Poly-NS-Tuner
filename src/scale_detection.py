@@ -15,30 +15,32 @@ class NoteSet:
 
         # chromatic scales ascending, ordered by modes: major, minor, more to be added...
         # weight info: *2 for dominant, *1 for other in-scale tones, *0 for non-scale tones
-        self.scale_weights = [[2, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1],
-                              [1, 2, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0],
-                              [0, 1, 2, 0, 1, 0, 1, 1, 0, 1, 0, 1],
-                              [1, 0, 1, 2, 0, 1, 0, 1, 1, 0, 1, 0],
-                              [0, 1, 0, 1, 2, 0, 1, 0, 1, 1, 0, 1],
-                              [1, 0, 1, 0, 1, 2, 0, 1, 0, 1, 1, 0],
-                              [0, 1, 0, 1, 0, 1, 2, 0, 1, 0, 1, 1],
-                              [1, 0, 1, 0, 1, 0, 1, 2, 0, 1, 0, 1],
-                              [1, 1, 0, 1, 0, 1, 0, 1, 2, 0, 1, 0],
-                              [0, 1, 1, 0, 1, 0, 1, 0, 1, 2, 0, 1],
-                              [1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 2, 0],
-                              [0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 2],
-                              [2, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0],
-                              [0, 2, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1],
-                              [1, 0, 2, 0, 1, 1, 0, 1, 0, 1, 1, 0],
-                              [0, 1, 0, 2, 0, 1, 1, 0, 1, 0, 1, 1],
-                              [1, 0, 1, 0, 2, 0, 1, 1, 0, 1, 0, 1],
-                              [1, 1, 0, 1, 0, 2, 0, 1, 1, 0, 1, 0],
-                              [0, 1, 1, 0, 1, 0, 2, 0, 1, 1, 0, 1],
-                              [1, 0, 1, 1, 0, 1, 0, 2, 0, 1, 1, 0],
-                              [0, 1, 0, 1, 1, 0, 1, 0, 2, 0, 1, 1],
-                              [1, 0, 1, 0, 1, 1, 0, 1, 0, 2, 0, 1],
-                              [1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 2, 0],
-                              [0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 2]]
+        self.scale_weights = [
+            [2, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1],
+            [1, 2, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0],
+            [0, 1, 2, 0, 1, 0, 1, 1, 0, 1, 0, 1],
+            [1, 0, 1, 2, 0, 1, 0, 1, 1, 0, 1, 0],
+            [0, 1, 0, 1, 2, 0, 1, 0, 1, 1, 0, 1],
+            [1, 0, 1, 0, 1, 2, 0, 1, 0, 1, 1, 0],
+            [0, 1, 0, 1, 0, 1, 2, 0, 1, 0, 1, 1],
+            [1, 0, 1, 0, 1, 0, 1, 2, 0, 1, 0, 1],
+            [1, 1, 0, 1, 0, 1, 0, 1, 2, 0, 1, 0],
+            [0, 1, 1, 0, 1, 0, 1, 0, 1, 2, 0, 1],
+            [1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 2, 0],
+            [0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 2],
+            [2, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0],
+            [0, 2, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1],
+            [1, 0, 2, 0, 1, 1, 0, 1, 0, 1, 1, 0],
+            [0, 1, 0, 2, 0, 1, 1, 0, 1, 0, 1, 1],
+            [1, 0, 1, 0, 2, 0, 1, 1, 0, 1, 0, 1],
+            [1, 1, 0, 1, 0, 2, 0, 1, 1, 0, 1, 0],
+            [0, 1, 1, 0, 1, 0, 2, 0, 1, 1, 0, 1],
+            [1, 0, 1, 1, 0, 1, 0, 2, 0, 1, 1, 0],
+            [0, 1, 0, 1, 1, 0, 1, 0, 2, 0, 1, 1],
+            [1, 0, 1, 0, 1, 1, 0, 1, 0, 2, 0, 1],
+            [1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 2, 0],
+            [0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 2],
+        ]
 
     def set_note_amounts(self, notes):
         for note in notes:
@@ -60,8 +62,13 @@ class NoteSet:
     def find_closest_scale(self):
         max_weight = -1
         closest_scale_idx = -1
-        candidate_weight_matrix = [[note * noteWeight for note, noteWeight in zip(self.note_amounts, self.scale_weights[i])]
-                                 for i in range(len(self.scale_weights))]
+        candidate_weight_matrix = [
+            [
+                note * noteWeight
+                for note, noteWeight in zip(self.note_amounts, self.scale_weights[i])
+            ]
+            for i in range(len(self.scale_weights))
+        ]
 
         for idx in range(len(candidate_weight_matrix)):
             candidate_weight = sum(candidate_weight_matrix[idx])
@@ -90,11 +97,11 @@ class NoteSet:
 
 # example use case
 # notes set could be maintained as queue of a desired size (updating in a 'sliding window' fashion)
-'''
+"""
 notes = [60, 60, 62, 63, 65, 67]
 n = NoteSet()
 n.set_note_amounts(notes)
 
 n.find_closest_scale()
 print(n.closest_scale)
-'''
+"""
