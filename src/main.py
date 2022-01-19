@@ -58,7 +58,7 @@ def split_wav_into_chunk(
 ):
     if len(data) - location_in_audio > samples_per_buffer:
         return data[
-            location_in_audio : location_in_audio + samples_per_buffer
+            location_in_audio: location_in_audio + samples_per_buffer
         ]  # PROCESS ONE SECOND OF AUDIO
     else:
         if need_full_buffer:
@@ -127,11 +127,11 @@ def main():
     min_pitch_track_frames = 4  # minimum num of frames for pitch to track
 
     # LOAD SAMPLE/PREP BUFFER
-    sample_name = "piano_single_long_C2_vanilla"
+    sample_name = "piano_single_long_C2_vanilla.wav"
     sample_bpm = (
         135  # Ideally set to BPM of project audio is from or BPM of input audio
     )
-    data, sr = load("samples/piano_single_long_C2_vanilla.wav", sr=None)
+    data, sr = load(f"samples/{sample_name}", sr=None)
     audio_len = len(data)
     samples_per_buffer = 4096  # optionally seconds_per_buffer * sr
     hop_size = samples_per_buffer // 2
