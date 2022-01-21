@@ -2,3 +2,4 @@
  - Setting environment vars necessary:
    - `set FLASK_APP=poly.py` or `$env:FLASK_APP=poly.py`
    - `set FLASK_ENV=development` or `$env:FLASK_APP=poly.py`
+   - `flask run`
