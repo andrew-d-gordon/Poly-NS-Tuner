@@ -2,8 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="9d0cf117-42b8-48dd-bc31-234c8dd594ec" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/flask_poly/notes.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -14,11 +15,20 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Python Script" />
+        <option value="HTML File" />
       </list>
     </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitSEFilterConfiguration">
+    <file-type-list>
+      <filtered-out-file-type name="LOCAL_BRANCH" />
+      <filtered-out-file-type name="REMOTE_BRANCH" />
+      <filtered-out-file-type name="TAG" />
+      <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
+    </file-type-list>
   </component>
   <component name="IgnoredFileRootStore">
     <option name="generatedRoots">
@@ -33,6 +43,7 @@
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
+    <property name="DefaultHtmlFileTemplate" value="HTML File" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
@@ -44,10 +55,11 @@
       <recent name="D:\pycharm projects\Poly NS Tuner" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Projects\Poly-NS-Tuner\flask_poly\static\css" />
+      <recent name="C:\Projects\Poly-NS-Tuner\flask_poly\templates" />
+      <recent name="C:\Projects\Poly-NS-Tuner\flask_poly\static" />
       <recent name="D:\pycharm projects\poly-ns-tuner\src" />
       <recent name="D:\pycharm projects\Poly NS Tuner\misc" />
-      <recent name="D:\pycharm projects\Poly NS Tuner\samples" />
-      <recent name="D:\pycharm projects\Poly NS Tuner" />
     </key>
   </component>
   <component name="RunManager" selected="Python.main">
